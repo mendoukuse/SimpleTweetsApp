@@ -14,6 +14,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
 /**
  * Created by christine_nguyen on 4/8/17.
  */
@@ -79,7 +81,8 @@ public class TweetsAdapter extends
         bodyText.setText(tweet.getBody());
 
         imageView.setImageResource(android.R.color.transparent);
-        Picasso.with(context).load(tweet.getUser().getProfileImageUrl()).fit().centerCrop().into(imageView);
+        Picasso.with(context).load(tweet.getUser().getProfileImageUrl())
+                .transform(new RoundedCornersTransformation(10, 10)).fit().centerCrop().into(imageView);
     }
 
     @Override

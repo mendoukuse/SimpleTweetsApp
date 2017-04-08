@@ -12,6 +12,7 @@ import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
 import com.codepath.apps.simpletweets.TwitterClient;
 import com.codepath.apps.simpletweets.adapters.TweetsAdapter;
+import com.codepath.apps.simpletweets.listeners.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.simpletweets.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -29,6 +30,12 @@ public class TimelineActivity extends AppCompatActivity {
     private ArrayList<Tweet> tweets;
     private TweetsAdapter adapter;
     private RecyclerView rvTweets;
+    private EndlessRecyclerViewScrollListener scrollListener;
+
+    // For pagination
+    int currentPage;
+    Long maxId;
+    Integer sinceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,21 @@ public class TimelineActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvTweets.setLayoutManager(layoutManager);
 
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                currentPage = page;
+                populateTimeline();
+            }
+        };
+
+        // Adds the scroll listener to RecyclerView
+        rvTweets.addOnScrollListener(scrollListener);
+
+        currentPage = 0;
+        sinceId = 1;
+        maxId = null;
+
         client = TwitterApplication.getRestClient(); // singleton
         populateTimeline();
     }
@@ -55,6 +77,10 @@ public class TimelineActivity extends AppCompatActivity {
 
                 ArrayList<Tweet> parsedTweets = Tweet.fromJSONArray(json);
 
+                // Tweets are returned in order of recency (most recent is first
+                Tweet last = parsedTweets.get(parsedTweets.size() - 1);
+                maxId = last.getUid() - 1;
+
                 int start = tweets.size();
                 tweets.addAll(parsedTweets);
                 adapter.notifyItemRangeInserted(start, parsedTweets.size());
@@ -64,7 +90,7 @@ public class TimelineActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("DEBUG", errorResponse.toString());
             }
-        });
+        }, maxId, sinceId);
     }
 
     @Override
