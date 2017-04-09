@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletweets.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +13,10 @@ import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
 import com.codepath.apps.simpletweets.TwitterClient;
 import com.codepath.apps.simpletweets.adapters.TweetsAdapter;
+import com.codepath.apps.simpletweets.fragments.ComposeTweetDialogFragment;
 import com.codepath.apps.simpletweets.listeners.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.simpletweets.models.Tweet;
+import com.codepath.apps.simpletweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -31,6 +34,8 @@ public class TimelineActivity extends AppCompatActivity {
     private TweetsAdapter adapter;
     private RecyclerView rvTweets;
     private EndlessRecyclerViewScrollListener scrollListener;
+
+    private User appUser;
 
     // For pagination
     int currentPage;
@@ -66,7 +71,23 @@ public class TimelineActivity extends AppCompatActivity {
         maxId = null;
 
         client = TwitterApplication.getRestClient(); // singleton
+        getUserInformation();
         populateTimeline();
+    }
+
+    private void getUserInformation() {
+        client.verifyCredentials(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+                appUser = User.fromJSON(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", errorResponse.toString());
+            }
+        });
     }
 
     private void populateTimeline() {
@@ -95,11 +116,22 @@ public class TimelineActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_timeline, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onComposeAction(MenuItem item) {
+        showComposeTweetDialogFragment();
+    }
+
+    private void showComposeTweetDialogFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeTweetDialogFragment tweetDialogFragment = ComposeTweetDialogFragment.newInstance(appUser);
+        tweetDialogFragment.show(fm, "compose_tweet_fragment");
     }
 }
