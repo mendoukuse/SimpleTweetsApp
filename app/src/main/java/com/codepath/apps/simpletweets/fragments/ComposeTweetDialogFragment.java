@@ -129,7 +129,7 @@ public class ComposeTweetDialogFragment extends DialogFragment {
     }
 
     public void sendBackResult() {
-        ComposeTweetDialogListener listener = (ComposeTweetDialogListener) getTargetFragment();
+        ComposeTweetDialogListener listener = (ComposeTweetDialogListener) getActivity();
         String status = etTweet.getText().toString();
         listener.onFinishedComposeDialog(status);
         dismiss();

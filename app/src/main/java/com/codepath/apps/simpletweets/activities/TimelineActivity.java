@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements ComposeTweetDialogFragment.ComposeTweetDialogListener {
 
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
@@ -114,6 +114,28 @@ public class TimelineActivity extends AppCompatActivity {
         }, maxId, sinceId);
     }
 
+    private void postTweet(String status) {
+        client.postNewTweet(status, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+                Tweet tweet = Tweet.fromJSON(response);
+
+                if (tweet != null) {
+                    tweets.add(0, tweet);
+                    // TODO (do we want to fetch all the new tweets at this time?)
+                    adapter.notifyItemInserted(0);
+                    rvTweets.scrollToPosition(0);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", errorResponse.toString());
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_timeline, menu);
@@ -133,5 +155,10 @@ public class TimelineActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         ComposeTweetDialogFragment tweetDialogFragment = ComposeTweetDialogFragment.newInstance(appUser);
         tweetDialogFragment.show(fm, "compose_tweet_fragment");
+    }
+
+    @Override
+    public void onFinishedComposeDialog(String tweet) {
+        postTweet(tweet);
     }
 }
