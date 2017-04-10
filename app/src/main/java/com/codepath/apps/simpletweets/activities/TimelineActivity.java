@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
@@ -147,7 +148,11 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
         return super.onOptionsItemSelected(item);
     }
 
-    public void onComposeAction(MenuItem item) {
+//    public void onComposeAction(MenuItem item) {
+//        showComposeTweetDialogFragment();
+//    }
+
+    public void onComposeAction(View view) {
         showComposeTweetDialogFragment();
     }
 
@@ -161,4 +166,5 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
     public void onFinishedComposeDialog(String tweet) {
         postTweet(tweet);
     }
+
 }
