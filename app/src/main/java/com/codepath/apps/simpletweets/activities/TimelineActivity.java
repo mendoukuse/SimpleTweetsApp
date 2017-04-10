@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity implements ComposeTweetDialogFragment.ComposeTweetDialogListener {
 
+    private Toolbar toolbar;
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetsAdapter adapter;
@@ -47,6 +49,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
         tweets = new ArrayList<>();
