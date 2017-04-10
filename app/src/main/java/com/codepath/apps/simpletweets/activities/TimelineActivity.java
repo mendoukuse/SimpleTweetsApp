@@ -1,7 +1,9 @@
 package com.codepath.apps.simpletweets.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +34,8 @@ import cz.msebera.android.httpclient.Header;
 public class TimelineActivity extends AppCompatActivity implements ComposeTweetDialogFragment.ComposeTweetDialogListener {
 
     private Toolbar toolbar;
+    private SwipeRefreshLayout swipeContainer;
+
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetsAdapter adapter;
@@ -43,16 +47,50 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
     // For pagination
     int currentPage;
     Long maxId;
-    Integer sinceId;
+    Long sinceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+        initToolbar();
+        initSwipeContainer();
+        initRecyclerView();
+
+        // set pagination params;
+        currentPage = 0;
+        sinceId = null;
+        maxId = null;
+
+        client = TwitterApplication.getRestClient(); // singleton
+        getUserInformation();
+        populateTimeline();
+    }
+
+    private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
 
+    private void initSwipeContainer() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshTimeline();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+    }
+
+    private void initRecyclerView() {
         rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
@@ -69,16 +107,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
             }
         };
 
-        // Adds the scroll listener to RecyclerView
         rvTweets.addOnScrollListener(scrollListener);
-
-        currentPage = 0;
-        sinceId = 1;
-        maxId = null;
-
-        client = TwitterApplication.getRestClient(); // singleton
-        getUserInformation();
-        populateTimeline();
     }
 
     private void getUserInformation() {
@@ -104,20 +133,59 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
 
                 ArrayList<Tweet> parsedTweets = Tweet.fromJSONArray(json);
 
-                // Tweets are returned in order of recency (most recent is first
-                Tweet last = parsedTweets.get(parsedTweets.size() - 1);
-                maxId = last.getUid() - 1;
-
-                int start = tweets.size();
-                tweets.addAll(parsedTweets);
-                adapter.notifyItemRangeInserted(start, parsedTweets.size());
+                if (parsedTweets.size() > 0) {
+                    updateParams(parsedTweets.get(0).getUid(),
+                                 parsedTweets.get(parsedTweets.size() - 1).getUid());
+                    // handle notification of adapter in adapter
+                    adapter.addAll(parsedTweets);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("DEBUG", errorResponse.toString());
+                Snackbar.make(swipeContainer, R.string.populate_timeline_error, Snackbar.LENGTH_LONG).show();
             }
-        }, maxId, sinceId);
+        }, maxId, null);
+    }
+
+    private void updateParams(Long newestUid, Long oldestUid) {
+        // Tweets are returned in order of recency (most recent is first)
+        if (sinceId == null || newestUid > sinceId) {
+            sinceId = newestUid;
+        }
+        if (maxId == null || oldestUid < maxId) {
+            maxId = oldestUid - 1;
+        }
+    }
+
+    private void clearParams() {
+        sinceId = null;
+        maxId = null;
+    }
+
+    public void refreshTimeline() {
+        client.getHomeTimeline(new JsonHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                Log.d("DEBUG", json.toString());
+                ArrayList<Tweet> parsedTweets = Tweet.fromJSONArray(json);
+
+                if (parsedTweets.size() > 0) {
+                    adapter.clear();
+                    clearParams();
+                    updateParams(parsedTweets.get(0).getUid(),
+                            parsedTweets.get(parsedTweets.size() - 1).getUid());
+                    adapter.addAll(parsedTweets);
+                }
+                swipeContainer.setRefreshing(false);
+            }
+
+            public void onFailure(Throwable e) {
+                Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+                Snackbar.make(swipeContainer, R.string.timeline_refresh_error, Snackbar.LENGTH_LONG).show();
+                swipeContainer.setRefreshing(false);
+            }
+        }, null, null);
     }
 
     private void postTweet(String status) {
@@ -138,6 +206,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("DEBUG", errorResponse.toString());
+                Snackbar.make(swipeContainer, R.string.post_tweet_error, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -152,10 +221,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
-
-//    public void onComposeAction(MenuItem item) {
-//        showComposeTweetDialogFragment();
-//    }
 
     public void onComposeAction(View view) {
         showComposeTweetDialogFragment();

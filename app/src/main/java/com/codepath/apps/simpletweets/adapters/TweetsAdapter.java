@@ -94,4 +94,17 @@ public class TweetsAdapter extends
     public int getItemCount() {
         return tweets.size();
     }
+
+    public void clear() {
+        tweets.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(ArrayList<Tweet> parsedTweets) {
+        int start = tweets.size();
+        tweets.addAll(parsedTweets);
+        notifyItemRangeInserted(start, parsedTweets.size());
+    }
+
 }

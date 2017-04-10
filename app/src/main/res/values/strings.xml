@@ -6,4 +6,7 @@
     <string name="title_activity_timeline">Home Timeline</string>
     <string name="action_settings">Settings</string>
     <string name="tweet">Tweet</string>
+    <string name="timeline_refresh_error">There was an error reloading your timeline</string>
+    <string name="post_tweet_error">There was an error posting your tweet. Please try again later</string>
+    <string name="populate_timeline_error">There was an error loading your timeline</string>
 </resources>
