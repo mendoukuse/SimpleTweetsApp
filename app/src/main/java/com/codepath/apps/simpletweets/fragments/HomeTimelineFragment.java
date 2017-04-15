@@ -14,7 +14,6 @@ import com.codepath.apps.simpletweets.TwitterApplication;
 import com.codepath.apps.simpletweets.TwitterClient;
 import com.codepath.apps.simpletweets.listeners.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.simpletweets.models.Tweet;
-import com.codepath.apps.simpletweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -26,13 +25,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class HomeTimelineFragment extends TweetsListFragment {
     private TwitterClient client;
-    private User appUser;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         client = TwitterApplication.getRestClient();
-        getUserInformation();
         populateTimeline();
         resetPaginationParams();
 
@@ -87,22 +84,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
         }, maxId, null);
     }
 
-
-    private void getUserInformation() {
-        client.getUserInfo(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
-                appUser = User.fromJSON(response);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", errorResponse.toString());
-            }
-        });
-    }
-
     protected void refreshTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
@@ -122,26 +103,4 @@ public class HomeTimelineFragment extends TweetsListFragment {
             }
         }, null, null);
     }
-
-
-    public void postTweet(String status) {
-        client.postNewTweet(status, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
-                Tweet tweet = Tweet.fromJSON(response);
-
-                if (tweet != null) {
-                    addTweetToTopOfTimeline(tweet);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG", errorResponse.toString());
-                handlePostFailure();
-            }
-        });
-    }
-
 }

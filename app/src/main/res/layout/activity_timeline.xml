@@ -6,13 +6,12 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <com.astuetz.PagerSlidingTabStrip
+    <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
-        app:pstsShouldExpand="true"
-        app:pstsTextAllCaps="true"
-        app:pstsDividerColor="@color/primary_light"
-        app:pstsIndicatorColor="@color/primary"
-        app:pstsUnderlineColor="@color/primary_dark"
+        app:tabMode="fixed"
+        app:tabIndicatorHeight="3dp"
+        app:tabSelectedTextColor="@color/primary_text"
+        app:tabTextColor="@color/secondary_text"
         android:layout_width="match_parent"
         android:layout_height="48dp" />
 

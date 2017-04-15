@@ -2,18 +2,32 @@ package com.codepath.apps.simpletweets.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.simpletweets.R;
+import com.codepath.apps.simpletweets.TwitterApplication;
+import com.codepath.apps.simpletweets.TwitterClient;
 import com.codepath.apps.simpletweets.adapters.TweetsPagerAdapter;
+import com.codepath.apps.simpletweets.fragments.ComposeTweetDialogFragment;
+import com.codepath.apps.simpletweets.models.Tweet;
+import com.codepath.apps.simpletweets.models.User;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
-//implements ComposeTweetDialogFragment.ComposeTweetDialogListener
+import org.json.JSONObject;
 
-public class TimelineActivity extends AppCompatActivity {
+import cz.msebera.android.httpclient.Header;
+
+public class TimelineActivity extends AppCompatActivity implements ComposeTweetDialogFragment.ComposeTweetDialogListener{
+    TwitterClient client;
+    ViewPager viewPager;
+    User appUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +35,12 @@ public class TimelineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline);
 
         // setup view pager
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
-        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabStrip.setViewPager(viewPager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        getApplicationUser();
 
     }
 
@@ -39,33 +55,65 @@ public class TimelineActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void getApplicationUser() {
+        client = TwitterApplication.getRestClient();
+        client.getUserInfo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+                appUser = User.fromJSON(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", errorResponse.toString());
+            }
+        });
+    }
+
     public void onProfileView(MenuItem mi) {
-        // launch profile view
         Intent i = new Intent(this, ProfileActivity.class);
         startActivity(i);
     }
 
     public void onComposeAction(MenuItem mi) {
-
+        showComposeTweetDialogFragment();
     }
 
-    // move out
-//    public void onComposeAction(View view) {
-//        showComposeTweetDialogFragment();
-//    }
+    private void showComposeTweetDialogFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeTweetDialogFragment tweetDialogFragment = ComposeTweetDialogFragment.newInstance(appUser);
+        tweetDialogFragment.show(fm, "fragment_compose_tweet");
+    }
 
-//    private void showComposeTweetDialogFragment() {
-//        FragmentManager fm = getSupportFragmentManager();
-//        User appUser = ((HomeTimelineFragment) fm.findFragmentById(R.id.fragment_timeline))
-//                .getAppUser();
-//        ComposeTweetDialogFragment tweetDialogFragment = ComposeTweetDialogFragment.newInstance(appUser);
-//        tweetDialogFragment.show(fm, "compose_tweet_fragment");
-//    }
+    public void onFinishedComposeDialog(String tweet) {
+        postTweet(tweet);
+    }
 
-//    public void onFinishedComposeDialog(String tweet) {
-//        HomeTimelineFragment fragment = (HomeTimelineFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.fragment_timeline);
-//        fragment.postTweet(tweet);
-//    }
+    public void postTweet(String status) {
+        client.postNewTweet(status, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+                Tweet tweet = Tweet.fromJSON(response);
+
+                if (tweet != null) {
+
+                    ((TweetsPagerAdapter) viewPager.getAdapter()).handleNewTweet(tweet);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG", errorResponse.toString());
+                handlePostFailure();
+            }
+        });
+    }
+
+    public void handlePostFailure() {
+        Snackbar.make(viewPager, R.string.post_tweet_error, Snackbar.LENGTH_LONG).show();
+    }
+
 
 }

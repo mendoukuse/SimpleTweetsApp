@@ -84,12 +84,6 @@ public abstract class TweetsListFragment extends Fragment {
         return layoutManager;
     }
 
-    public void addTweetToTopOfTimeline(Tweet tweet) {
-        tweets.add(0, tweet);
-        adapter.notifyItemInserted(0);
-        rvTweets.scrollToPosition(0);
-    }
-
     public void handleRefreshSuccess(ArrayList<Tweet> newTweets) {
         if (newTweets.size() > 0) {
             clearAll();
@@ -105,10 +99,6 @@ public abstract class TweetsListFragment extends Fragment {
 
     public void handleLoadFailure() {
         Snackbar.make(swipeContainer, R.string.populate_timeline_error, Snackbar.LENGTH_LONG).show();
-    }
-
-    public void handlePostFailure() {
-        Snackbar.make(swipeContainer, R.string.post_tweet_error, Snackbar.LENGTH_LONG).show();
     }
 
     public void addAll(ArrayList<Tweet> tweets) {
@@ -134,7 +124,18 @@ public abstract class TweetsListFragment extends Fragment {
         }
     }
 
+    public void handleNewTweet(Tweet tweet) {
+        addTweetToTopOfTimeline(tweet);
+    }
+
+    public void addTweetToTopOfTimeline(Tweet tweet) {
+        tweets.add(0, tweet);
+        adapter.notifyItemInserted(0);
+        rvTweets.scrollToPosition(0);
+    }
+
     protected abstract void populateTimeline();
 
     protected abstract void refreshTimeline();
+
 }
