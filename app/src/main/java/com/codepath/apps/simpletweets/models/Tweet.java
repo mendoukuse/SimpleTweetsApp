@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static android.text.format.DateUtils.FORMAT_ABBREV_ALL;
+
 /**
  * Created by christine_nguyen on 4/8/17.
  */
@@ -46,7 +48,8 @@ public class Tweet {
         try {
             long dateMillis = sf.parse(createdAt).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS,
+                    FORMAT_ABBREV_ALL).toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }

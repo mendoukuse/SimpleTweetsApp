@@ -9,4 +9,9 @@
     <string name="timeline_refresh_error">There was an error reloading your timeline</string>
     <string name="post_tweet_error">There was an error posting your tweet. Please try again later</string>
     <string name="populate_timeline_error">There was an error loading your timeline</string>
+    <string name="profile">Profile</string>
+    <string name="compose">Compose</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="followers_count">%d Followers</string>
+    <string name="friends_count">%d Following</string>
 </resources>
