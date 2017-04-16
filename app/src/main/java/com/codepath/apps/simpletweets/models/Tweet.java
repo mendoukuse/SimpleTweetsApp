@@ -24,7 +24,6 @@ public class Tweet {
     String body;
     User user;
     String createdAt;
-    int replyCount;
     int retweetCount;
     int favoriteCount;
     boolean favorited;
@@ -66,10 +65,6 @@ public class Tweet {
         return relativeDate;
     }
 
-    public int getReplyCount() {
-        return replyCount;
-    }
-
     public int getRetweetCount() {
         return retweetCount;
     }
@@ -86,7 +81,6 @@ public class Tweet {
             tweet.uid = json.getLong("id");
             tweet.createdAt = json.getString("created_at");
             tweet.user = User.fromJSON(json.getJSONObject("user"));
-            tweet.replyCount = json.getInt("reply_count");
             tweet.favoriteCount = json.getInt("favorite_count");
             tweet.retweetCount = json.getInt("retweet_count");
             tweet.retweeted = json.getBoolean("retweeted");

@@ -69,9 +69,8 @@ public class TweetDetailsDialogFragment extends DialogFragment {
         tvScreenName.setText("@" + tweet.getUser().getScreenName());
         tvBody.setText(tweet.getBody());
         tvRelativeDate.setText(tweet.getRelativeTimeAgo());
-        tvReplies.setText(tweet.getReplyCount());
-        tvFavorites.setText(tweet.getFavoriteCount());
-        tvRetweets.setText(tweet.getRetweetCount());
+        tvFavorites.setText(String.valueOf(tweet.getFavoriteCount()));
+        tvRetweets.setText(String.valueOf(tweet.getRetweetCount()));
 
         Picasso.with(view.getContext()).load(tweet.getUser().getProfileImageUrl())
                 .transform(new RoundedCornersTransformation(10, 10)).fit().centerCrop().into(ivProfileImage);
