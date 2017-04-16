@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -31,6 +33,7 @@ public class TweetDetailsDialogFragment extends DialogFragment {
     @BindView(R.id.tvReplies) TextView tvReplies;
     @BindView(R.id.tvRetweets) TextView tvRetweets;
     @BindView(R.id.tvFavorites) TextView tvFavorites;
+    @BindView(R.id.btnClose) Button btnClose;
 
     private Unbinder unbinder;
 
@@ -79,7 +82,8 @@ public class TweetDetailsDialogFragment extends DialogFragment {
         unbinder.unbind();
     }
 
-    public void cancel() {
+    @OnClick(R.id.btnClose)
+    public void cancel(Button button) {
         dismiss();
     }
 }
