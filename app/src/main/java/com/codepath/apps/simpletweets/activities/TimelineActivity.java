@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
@@ -115,5 +117,14 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
         Snackbar.make(viewPager, R.string.post_tweet_error, Snackbar.LENGTH_LONG).show();
     }
 
+    public void displayUserProfile(View view) {
+        Log.d("DEBUG", view.toString());
 
+        TextView tvScreenName = (TextView) view.findViewById(R.id.tvScreenName);
+        String screenName = tvScreenName.getText().toString().replace("@", "");
+
+        Intent i = new Intent(this, ProfileActivity.class);
+        i.putExtra("screen_name", screenName);
+        startActivity(i);
+    }
 }

@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletweets.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.simpletweets.R;
+import com.codepath.apps.simpletweets.activities.ProfileActivity;
 import com.codepath.apps.simpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -67,7 +71,7 @@ public class TweetsAdapter extends
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Tweet tweet = tweets.get(position);
+        final Tweet tweet = tweets.get(position);
 
         ImageView imageView = holder.ivProfileImage;
         TextView username = holder.tvUserName;
@@ -83,6 +87,16 @@ public class TweetsAdapter extends
         imageView.setImageResource(android.R.color.transparent);
         Picasso.with(context).load(tweet.getUser().getProfileImageUrl())
                 .transform(new RoundedCornersTransformation(10, 10)).fit().centerCrop().into(imageView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), ProfileActivity.class);
+                i.putExtra("user", Parcels.wrap(tweet.getUser()));
+                i.putExtra("screen_name", tweet.getUser().getScreenName());
+                v.getContext().startActivity(i);
+            }
+        });
     }
 
     @Override

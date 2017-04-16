@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.adapters.TweetsAdapter;
 import com.codepath.apps.simpletweets.listeners.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.simpletweets.listeners.ItemClickSupport;
 import com.codepath.apps.simpletweets.models.Tweet;
 
 import java.util.ArrayList;
@@ -73,6 +75,17 @@ public abstract class TweetsListFragment extends Fragment {
         rvTweets.setAdapter(adapter);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rvTweets.setLayoutManager(layoutManager);
+
+        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        // Show detailed tweet view or fragment
+                        Tweet tweet = tweets.get(position);
+                        showTweetDetailsDialogFragment(tweet);
+                    }
+                }
+        );
     }
 
     public void setScrollListener(EndlessRecyclerViewScrollListener listener) {
@@ -132,6 +145,13 @@ public abstract class TweetsListFragment extends Fragment {
         tweets.add(0, tweet);
         adapter.notifyItemInserted(0);
         rvTweets.scrollToPosition(0);
+    }
+
+    public void showTweetDetailsDialogFragment(Tweet tweet) {
+        // Todo: this may need to move to a listener
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        TweetDetailsDialogFragment frag = TweetDetailsDialogFragment.newInstance(tweet);
+        frag.show(fm, "fragment_tweet_details");
     }
 
     protected abstract void populateTimeline();

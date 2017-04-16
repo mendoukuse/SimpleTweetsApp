@@ -5,6 +5,7 @@ import android.text.format.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,11 +18,19 @@ import static android.text.format.DateUtils.FORMAT_ABBREV_ALL;
  * Created by christine_nguyen on 4/8/17.
  */
 
+@Parcel
 public class Tweet {
-    private long uid;
-    private String body;
-    private User user;
-    private String createdAt;
+    long uid;
+    String body;
+    User user;
+    String createdAt;
+    int replyCount;
+    int retweetCount;
+    int favoriteCount;
+    boolean favorited;
+    boolean retweeted;
+
+    public Tweet() {}
 
     public long getUid() {
         return uid;
@@ -57,6 +66,18 @@ public class Tweet {
         return relativeDate;
     }
 
+    public int getReplyCount() {
+        return replyCount;
+    }
+
+    public int getRetweetCount() {
+        return retweetCount;
+    }
+
+    public int getFavoriteCount() {
+        return favoriteCount;
+    }
+
     public static Tweet fromJSON(JSONObject json) {
         Tweet tweet = new Tweet();
 
@@ -65,6 +86,11 @@ public class Tweet {
             tweet.uid = json.getLong("id");
             tweet.createdAt = json.getString("created_at");
             tweet.user = User.fromJSON(json.getJSONObject("user"));
+            tweet.replyCount = json.getInt("reply_count");
+            tweet.favoriteCount = json.getInt("favorite_count");
+            tweet.retweetCount = json.getInt("retweet_count");
+            tweet.retweeted = json.getBoolean("retweeted");
+            tweet.favorited = json.getBoolean("favorited");
         } catch (JSONException e) {
             e.printStackTrace();
         }
