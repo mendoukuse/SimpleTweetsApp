@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletweets.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,8 +11,11 @@ import android.view.MenuItem;
 import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
 import com.codepath.apps.simpletweets.TwitterClient;
+import com.codepath.apps.simpletweets.fragments.TweetDetailsDialogFragment;
+import com.codepath.apps.simpletweets.fragments.TweetsListFragment;
 import com.codepath.apps.simpletweets.fragments.UserHeaderFragment;
 import com.codepath.apps.simpletweets.fragments.UserTimelineFragment;
+import com.codepath.apps.simpletweets.models.Tweet;
 import com.codepath.apps.simpletweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -20,7 +24,7 @@ import org.parceler.Parcels;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements TweetsListFragment.OnItemClickedListener {
     UserHeaderFragment fragmentUserHeader;
     TwitterClient client;
     User user;
@@ -84,5 +88,12 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTweetClicked(Tweet tweet) {
+        FragmentManager fm = getSupportFragmentManager();
+        TweetDetailsDialogFragment frag = TweetDetailsDialogFragment.newInstance(tweet);
+        frag.show(fm, "fragment_tweet_details");
     }
 }

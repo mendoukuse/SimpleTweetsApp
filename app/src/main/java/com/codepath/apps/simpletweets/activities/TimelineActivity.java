@@ -18,6 +18,8 @@ import com.codepath.apps.simpletweets.TwitterApplication;
 import com.codepath.apps.simpletweets.TwitterClient;
 import com.codepath.apps.simpletweets.adapters.TweetsPagerAdapter;
 import com.codepath.apps.simpletweets.fragments.ComposeTweetDialogFragment;
+import com.codepath.apps.simpletweets.fragments.TweetDetailsDialogFragment;
+import com.codepath.apps.simpletweets.fragments.TweetsListFragment;
 import com.codepath.apps.simpletweets.models.Tweet;
 import com.codepath.apps.simpletweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -26,7 +28,8 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-public class TimelineActivity extends AppCompatActivity implements ComposeTweetDialogFragment.ComposeTweetDialogListener{
+public class TimelineActivity extends AppCompatActivity
+        implements ComposeTweetDialogFragment.ComposeTweetDialogListener, TweetsListFragment.OnItemClickedListener {
     TwitterClient client;
     ViewPager viewPager;
     User appUser;
@@ -126,5 +129,12 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetD
         Intent i = new Intent(this, ProfileActivity.class);
         i.putExtra("screen_name", screenName);
         startActivity(i);
+    }
+
+    @Override
+    public void onTweetClicked(Tweet tweet) {
+        FragmentManager fm = getSupportFragmentManager();
+        TweetDetailsDialogFragment frag = TweetDetailsDialogFragment.newInstance(tweet);
+        frag.show(fm, "fragment_tweet_details");
     }
 }

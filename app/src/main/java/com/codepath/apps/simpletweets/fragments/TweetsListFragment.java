@@ -1,10 +1,10 @@
 package com.codepath.apps.simpletweets.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +42,27 @@ public abstract class TweetsListFragment extends Fragment {
     // For pagination
     Long maxId;
     Long sinceId;
+
+    private OnItemClickedListener listener;
+
+    // Define the events that the fragment will use to communicate
+    public interface OnItemClickedListener {
+        // This can be any number of events to be sent to the activity
+        public void onTweetClicked(Tweet tweet);
+    }
+
+    // Store the listener (activity) that will have events fired once the fragment is attached
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnItemClickedListener) {
+            listener = (OnItemClickedListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement TweetsListFragment.OnItemClickedListener");
+        }
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,9 +180,7 @@ public abstract class TweetsListFragment extends Fragment {
 
     public void showTweetDetailsDialogFragment(Tweet tweet) {
         // Todo: this may need to move to a listener
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        TweetDetailsDialogFragment frag = TweetDetailsDialogFragment.newInstance(tweet);
-        frag.show(fm, "fragment_tweet_details");
+        listener.onTweetClicked(tweet);
     }
 
     protected abstract void populateTimeline();
