@@ -18,6 +18,8 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
@@ -28,20 +30,15 @@ public class TweetsAdapter extends
         RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivProfileImage;
-        private TextView tvUserName;
-        private TextView tvScreenName;
-        private TextView tvRelativeDate;
-        private TextView tvBody;
+        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+        @BindView(R.id.tvUserName) TextView tvUserName;
+        @BindView(R.id.tvScreenName) TextView tvScreenName;
+        @BindView(R.id.tvDate) TextView tvRelativeDate;
+        @BindView(R.id.tvBody) TextView tvBody;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
-            ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
-            tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
-            tvScreenName = (TextView) itemView.findViewById(R.id.tvScreenName);
-            tvRelativeDate = (TextView) itemView.findViewById(R.id.tvDate);
-            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
+            ButterKnife.bind(this, itemView);
         }
     }
 

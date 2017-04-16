@@ -33,16 +33,6 @@
         tools:text="TextView" />
 
     <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:textSize="10sp"
-        tools:text="TextView" />
-
-    <TextView
         android:id="@+id/tvScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,41 +45,31 @@
         android:id="@+id/tvBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivProfileImage"
-        tools:text="TextView"
-        android:textAppearance="?android:textAppearanceLarge"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ivProfileImage"
+        android:textAllCaps="false"
+        android:textAppearance="?android:textAppearanceLarge"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvBody"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/secondary_text"
+        android:textSize="12sp"
+        tools:text="TextView" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/tvBody">
-
-        <RelativeLayout
-            android:id="@+id/llReplies"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginRight="15dp">
-
-            <ImageView
-                android:id="@+id/ivReply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_reply"
-                android:scaleType="fitXY"
-                 />
-
-            <TextView
-                android:layout_toRightOf="@id/ivReply"
-                android:layout_centerVertical="true"
-                android:id="@+id/tvReplies"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="10" />
-        </RelativeLayout>
+        android:layout_below="@id/tvDate">
 
         <RelativeLayout
             android:id="@+id/llFavorites"
@@ -104,13 +84,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_gray"
+                android:layout_marginRight="5dp"
                 android:scaleType="fitXY"/>
+
             <TextView
                 android:layout_toRightOf="@id/ivFavorites"
                 android:layout_centerVertical="true"
                 android:id="@+id/tvFavorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 tools:text="5"/>
         </RelativeLayout>
 
@@ -127,7 +110,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_retweet"/>
+                android:src="@drawable/ic_retweet"
+                android:layout_marginRight="5dp"/>
 
             <TextView
                 android:layout_toRightOf="@id/ivRetweets"
@@ -135,7 +119,34 @@
                 android:id="@+id/tvRetweets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 tools:text="10"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/llReplies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginRight="15dp">
+
+            <ImageView
+                android:id="@+id/ivReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_reply"
+                android:layout_marginRight="5dp"
+                android:scaleType="fitXY"
+                />
+
+            <TextView
+                android:layout_toRightOf="@id/ivReply"
+                android:layout_centerVertical="true"
+                android:id="@+id/tvReplies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
+                tools:text="10" />
         </RelativeLayout>
 
     </LinearLayout>

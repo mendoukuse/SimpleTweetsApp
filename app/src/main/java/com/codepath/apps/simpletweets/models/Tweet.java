@@ -47,6 +47,18 @@ public class Tweet {
         return createdAt;
     }
 
+    public String getFormattedTime() {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM dd, yyyy hh:mm a z");
+        try {
+            long dateMillis = sf.parse(createdAt).getTime();
+            return sdf.format(dateMillis);
+        } catch (ParseException e) {
+            return createdAt;
+        }
+    }
+
     public String getRelativeTimeAgo() {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);

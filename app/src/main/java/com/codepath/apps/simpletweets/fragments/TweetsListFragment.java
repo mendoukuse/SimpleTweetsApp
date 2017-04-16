@@ -20,6 +20,10 @@ import com.codepath.apps.simpletweets.models.Tweet;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Created by christine_nguyen on 4/14/17.
  */
@@ -27,11 +31,13 @@ import java.util.ArrayList;
 public abstract class TweetsListFragment extends Fragment {
     private ArrayList<Tweet> tweets;
     private TweetsAdapter adapter;
-    private RecyclerView rvTweets;
+    @BindView(R.id.rvTweets) RecyclerView rvTweets;
     private EndlessRecyclerViewScrollListener scrollListener;
     private LinearLayoutManager layoutManager;
 
-    private SwipeRefreshLayout swipeContainer;
+    @BindView(R.id.swipeContainer) SwipeRefreshLayout swipeContainer;
+
+    private Unbinder unbinder;
 
     // For pagination
     Long maxId;
@@ -49,7 +55,7 @@ public abstract class TweetsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_tweets_list, container, false);
-
+        unbinder = ButterKnife.bind(this, v);
         initSwipeContainer(v);
         initRecyclerView(v);
 
@@ -57,7 +63,6 @@ public abstract class TweetsListFragment extends Fragment {
     }
 
     private void initSwipeContainer(View v) {
-        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -66,12 +71,17 @@ public abstract class TweetsListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
     public void setSwipeListener(SwipeRefreshLayout.OnRefreshListener listener) {
         swipeContainer.setOnRefreshListener(listener);
     }
 
     private void initRecyclerView(View v) {
-        rvTweets = (RecyclerView) v.findViewById(R.id.rvTweets);
         rvTweets.setAdapter(adapter);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rvTweets.setLayoutManager(layoutManager);

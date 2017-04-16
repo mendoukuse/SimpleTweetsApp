@@ -16,21 +16,23 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
-/**
- * Created by christine_nguyen on 4/15/17.
- */
 
 public class TweetDetailsDialogFragment extends DialogFragment {
-    private ImageView ivProfileImage;
-    private TextView tvUserName;
-    private TextView tvScreenName;
-    private TextView tvRelativeDate;
-    private TextView tvBody;
-    private TextView tvReplies;
-    private TextView tvRetweets;
-    private TextView tvFavorites;
+    @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+    @BindView(R.id.tvUserName) TextView tvUserName;
+    @BindView(R.id.tvScreenName) TextView tvScreenName;
+    @BindView(R.id.tvDate) TextView tvRelativeDate;
+    @BindView(R.id.tvBody) TextView tvBody;
+    @BindView(R.id.tvReplies) TextView tvReplies;
+    @BindView(R.id.tvRetweets) TextView tvRetweets;
+    @BindView(R.id.tvFavorites) TextView tvFavorites;
+
+    private Unbinder unbinder;
 
     public TweetDetailsDialogFragment() {}
 
@@ -47,7 +49,9 @@ public class TweetDetailsDialogFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tweet_details, container);
+        View view = inflater.inflate(R.layout.fragment_tweet_details, container);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -56,19 +60,10 @@ public class TweetDetailsDialogFragment extends DialogFragment {
 
         Tweet tweet = Parcels.unwrap(getArguments().getParcelable("tweet"));
 
-        ivProfileImage = (ImageView) view.findViewById(R.id.ivProfileImage);
-        tvUserName = (TextView) view.findViewById(R.id.tvUserName);
-        tvScreenName = (TextView) view.findViewById(R.id.tvScreenName);
-        tvRelativeDate = (TextView) view.findViewById(R.id.tvDate);
-        tvBody = (TextView) view.findViewById(R.id.tvBody);
-        tvReplies = (TextView) view.findViewById(R.id.tvReplies);
-        tvRetweets = (TextView) view.findViewById(R.id.tvRetweets);
-        tvFavorites = (TextView) view.findViewById(R.id.tvFavorites);
-
         tvUserName.setText(tweet.getUser().getName());
         tvScreenName.setText("@" + tweet.getUser().getScreenName());
         tvBody.setText(tweet.getBody());
-        tvRelativeDate.setText(tweet.getRelativeTimeAgo());
+        tvRelativeDate.setText(tweet.getFormattedTime());
         tvFavorites.setText(String.valueOf(tweet.getFavoriteCount()));
         tvRetweets.setText(String.valueOf(tweet.getRetweetCount()));
 
@@ -76,6 +71,12 @@ public class TweetDetailsDialogFragment extends DialogFragment {
                 .transform(new RoundedCornersTransformation(10, 10)).fit().centerCrop().into(ivProfileImage);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     public void cancel() {
