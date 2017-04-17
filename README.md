@@ -2,7 +2,7 @@
 
 **SimpleTweetsApp** is an android app that allows a user to view home and mentions timelines, view user profiles with user timelines, as well as compose and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **X** hours spent in total
+Time spent: **8** hours spent in total
 
 ## User Stories
 
@@ -42,12 +42,14 @@ The following **additional** features are implemented:
 
 * [ ] List anything else that you can get done to improve the app functionality!
 * [x] Leveraged [ButterKnife](http://guides.codepath.com/android/Reducing-View-Boilerplate-with-Butterknife) for data binding
+* [x] Used SwipeRefreshLayout for all tweet timeline views 
+* [x] Added pagination for Following and Followers views
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/mendoukuse/SimpleTweetsApp/blob/project-four/images/SimpleTweetsAppV2-Walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -59,6 +61,7 @@ Describe any challenges encountered while building the app.
 
 - [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
 - [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
+- [ButterKnife](http://jakewharton.github.io/butterknife/) - Field and method binding for Android views
 
 ## License
 
