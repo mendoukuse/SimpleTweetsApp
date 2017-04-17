@@ -20,6 +20,9 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
@@ -28,13 +31,14 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class ComposeTweetDialogFragment extends DialogFragment {
 
-    private ImageView ivProfileImage;
-    private EditText etTweet;
-    private TextView tvUserName;
-    private TextView tvScreenName;
-    private TextView tvCounter;
-    private Button btnClose;
-    private Button btnTweet;
+    @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+    @BindView(R.id.etTweet) EditText etTweet;
+    @BindView(R.id.tvUserName) TextView tvUserName;
+    @BindView(R.id.tvScreenName) TextView tvScreenName;
+    @BindView(R.id.tvCounter) TextView tvCounter;
+    @BindView(R.id.btnClose) Button btnClose;
+    @BindView(R.id.btnTweet) Button btnTweet;
+    private Unbinder unbinder;
     private Integer countLimit = 140;
 
     public ComposeTweetDialogFragment() {}
@@ -56,7 +60,9 @@ public class ComposeTweetDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_compose, container);
+        View view = inflater.inflate(R.layout.fragment_compose, container);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -64,15 +70,6 @@ public class ComposeTweetDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         User user = Parcels.unwrap(getArguments().getParcelable("user"));
-
-        ivProfileImage = (ImageView) view.findViewById(R.id.ivProfileImage);
-        etTweet = (EditText) view.findViewById(R.id.etTweet);
-        tvUserName = (TextView) view.findViewById(R.id.tvUserName);
-        tvScreenName = (TextView) view.findViewById(R.id.tvScreenName);
-        tvCounter = (TextView) view.findViewById(R.id.tvCounter);
-
-        btnClose = (Button) view.findViewById(R.id.btnClose);
-        btnTweet = (Button) view.findViewById(R.id.btnTweet);
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +119,12 @@ public class ComposeTweetDialogFragment extends DialogFragment {
                 .transform(new RoundedCornersTransformation(10, 10)).fit().centerCrop().into(ivProfileImage);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     public void cancel() {

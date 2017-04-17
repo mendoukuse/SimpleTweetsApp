@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletweets.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.simpletweets.R;
+import com.codepath.apps.simpletweets.activities.ProfileActivity;
 import com.codepath.apps.simpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
@@ -24,20 +30,15 @@ public class TweetsAdapter extends
         RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivProfileImage;
-        private TextView tvUserName;
-        private TextView tvScreenName;
-        private TextView tvRelativeDate;
-        private TextView tvBody;
+        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+        @BindView(R.id.tvUserName) TextView tvUserName;
+        @BindView(R.id.tvScreenName) TextView tvScreenName;
+        @BindView(R.id.tvDate) TextView tvRelativeDate;
+        @BindView(R.id.tvBody) TextView tvBody;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
-            ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
-            tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
-            tvScreenName = (TextView) itemView.findViewById(R.id.tvScreenName);
-            tvRelativeDate = (TextView) itemView.findViewById(R.id.tvDate);
-            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
+            ButterKnife.bind(this, itemView);
         }
     }
 
@@ -67,7 +68,7 @@ public class TweetsAdapter extends
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Tweet tweet = tweets.get(position);
+        final Tweet tweet = tweets.get(position);
 
         ImageView imageView = holder.ivProfileImage;
         TextView username = holder.tvUserName;
@@ -83,6 +84,16 @@ public class TweetsAdapter extends
         imageView.setImageResource(android.R.color.transparent);
         Picasso.with(context).load(tweet.getUser().getProfileImageUrl())
                 .transform(new RoundedCornersTransformation(10, 10)).fit().centerCrop().into(imageView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), ProfileActivity.class);
+                i.putExtra("user", Parcels.wrap(tweet.getUser()));
+                i.putExtra("screen_name", tweet.getUser().getScreenName());
+                v.getContext().startActivity(i);
+            }
+        });
     }
 
     @Override

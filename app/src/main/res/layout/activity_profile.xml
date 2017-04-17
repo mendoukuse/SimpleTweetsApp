@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.codepath.apps.simpletweets.activities.ProfileActivity">
+
+    <FrameLayout
+        android:id="@+id/flHeaderContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        app:tabMode="fixed"
+        app:tabIndicatorHeight="3dp"
+        app:tabSelectedTextColor="@color/primary_text"
+        app:tabTextColor="@color/secondary_text"
+        android:layout_below="@id/flHeaderContainer"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_below="@id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white" />
+
+</RelativeLayout>
