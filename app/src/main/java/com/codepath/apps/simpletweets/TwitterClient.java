@@ -23,7 +23,7 @@ import org.scribe.builder.api.TwitterApi;
  */
 public class TwitterClient extends OAuthBaseClient {
 	public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class;
-	public static final String REST_URL = "https://api.twitter.com/1.1/";
+	public static final String REST_URL = "https://api.twitter.com/1.1";
 	public static final String REST_CONSUMER_KEY = "VRmaZTRsC79RnO8w86541hv4O";
 	public static final String REST_CONSUMER_SECRET = "MHQtdxsbxHzyHdhnJxKhib6chLHOXj7yPMfls3kYZDEzSLj3EH";
 	public static final String REST_CALLBACK_URL = "oauth://cptweetstream";
@@ -100,6 +100,42 @@ public class TwitterClient extends OAuthBaseClient {
         }
         if (maxId != null) {
             params.put("max_id", maxId);
+        }
+
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getUserFollowers(String screenName, Long nextCursor, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("followers/list.json");
+        RequestParams params = new RequestParams();
+
+        params.put("count", 20);
+
+        if (screenName != null) {
+            params.put("screen_name", screenName);
+        }
+        if (nextCursor == null) {
+            params.put("cursor", -1);
+        } else {
+            params.put("cursor", nextCursor);
+        }
+
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getUserFriends(String screenName, Long nextCursor, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("friends/list.json");
+        RequestParams params = new RequestParams();
+
+        params.put("count", 20);
+
+        if (screenName != null) {
+            params.put("screen_name", screenName);
+        }
+        if (nextCursor == null) {
+            params.put("cursor", -1);
+        } else {
+            params.put("cursor", nextCursor);
         }
 
         getClient().get(apiUrl, params, handler);
