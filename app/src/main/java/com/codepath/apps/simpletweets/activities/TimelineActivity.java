@@ -10,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
@@ -26,12 +24,15 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity
         implements ComposeTweetDialogFragment.ComposeTweetDialogListener, TweetsListFragment.OnItemClickedListener {
     TwitterClient client;
-    ViewPager viewPager;
+    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout tabLayout;
     User appUser;
 
     @Override
@@ -39,10 +40,10 @@ public class TimelineActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+         ButterKnife.bind(this);
+
         // setup view pager
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         getApplicationUser();
@@ -103,7 +104,6 @@ public class TimelineActivity extends AppCompatActivity
                 Tweet tweet = Tweet.fromJSON(response);
 
                 if (tweet != null) {
-
                     ((TweetsPagerAdapter) viewPager.getAdapter()).handleNewTweet(tweet);
                 }
             }
@@ -118,17 +118,6 @@ public class TimelineActivity extends AppCompatActivity
 
     public void handlePostFailure() {
         Snackbar.make(viewPager, R.string.post_tweet_error, Snackbar.LENGTH_LONG).show();
-    }
-
-    public void displayUserProfile(View view) {
-        Log.d("DEBUG", view.toString());
-
-        TextView tvScreenName = (TextView) view.findViewById(R.id.tvScreenName);
-        String screenName = tvScreenName.getText().toString().replace("@", "");
-
-        Intent i = new Intent(this, ProfileActivity.class);
-        i.putExtra("screen_name", screenName);
-        startActivity(i);
     }
 
     @Override
