@@ -1,8 +1,10 @@
 package com.codepath.apps.simpletweets.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -11,10 +13,10 @@ import android.view.MenuItem;
 import com.codepath.apps.simpletweets.R;
 import com.codepath.apps.simpletweets.TwitterApplication;
 import com.codepath.apps.simpletweets.TwitterClient;
+import com.codepath.apps.simpletweets.adapters.ProfilePagerAdapter;
 import com.codepath.apps.simpletweets.fragments.TweetDetailsDialogFragment;
 import com.codepath.apps.simpletweets.fragments.TweetsListFragment;
 import com.codepath.apps.simpletweets.fragments.UserHeaderFragment;
-import com.codepath.apps.simpletweets.fragments.UserTimelineFragment;
 import com.codepath.apps.simpletweets.models.Tweet;
 import com.codepath.apps.simpletweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -22,17 +24,24 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class ProfileActivity extends AppCompatActivity implements TweetsListFragment.OnItemClickedListener {
     UserHeaderFragment fragmentUserHeader;
     TwitterClient client;
     User user;
+    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout tabLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        ButterKnife.bind(this);
 
         client = TwitterApplication.getRestClient();
 
@@ -41,10 +50,10 @@ public class ProfileActivity extends AppCompatActivity implements TweetsListFrag
         String screenName = getIntent().getStringExtra("screen_name");
 
         if (savedInstanceState == null) {
-            UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.flContainer, fragmentUserTimeline);
-            ft.commit();
+            viewPager.setAdapter(new ProfilePagerAdapter(
+                    getSupportFragmentManager(),
+                    screenName));
+            tabLayout.setupWithViewPager(viewPager);
         }
     }
 
